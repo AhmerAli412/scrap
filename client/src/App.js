@@ -23,12 +23,22 @@ function App() {
     e.preventDefault();
     setIsLoading(true);
 
-    try {
-      const response = await axios.get(`http://localhost:3001/images?url=${url}`);
-      setImageUrls(response.data);
-    } catch (error) {
-      console.error(error);
+ // Inside the handleSubmit function, after receiving the response and before setting image URLs
+try {
+  const response = await axios.get(`https://scrape-img-url.onrender.com/images?url=${url}`);
+  const baseUrl = new URL(url).origin; // Get the base URL from the entered URL
+  const completeImageUrls = response.data.map(imgUrl => {
+    if (imgUrl.startsWith('/')) {
+      return baseUrl + imgUrl; // Complete relative URLs with the base URL
+    } else {
+      return imgUrl; // Keep absolute URLs as is
     }
+  });
+  setImageUrls(completeImageUrls);
+} catch (error) {
+  console.error(error);
+}
+
 
     setIsLoading(false);
   };
